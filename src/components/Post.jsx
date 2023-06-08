@@ -8,8 +8,6 @@ import { useState } from 'react';
 
 export function Post({ author, publishedAt, content }) {
   const [comments, setComments] = useState([
-    1,
-    2,
     'Post muito bacana, hein?!'
   ]);
 
@@ -24,15 +22,17 @@ export function Post({ author, publishedAt, content }) {
     addSuffix: true
   });
 
+  const isNewCommentEmpty = newCommentText.length === 0;
+
   function handleCrateNewComment() {
     event.preventDefault()
 
-    setComments([...comments, comments.length + 1]);
     setComments([...comments, newCommentText]);
     setNewCommentText('');
   }
 
   function handleNewCommentChange() {
+    event.target.setCustomValidity("");
     setNewCommentText(event.target.value);
   }
 
@@ -42,6 +42,11 @@ export function Post({ author, publishedAt, content }) {
     })
     setComments(commentsWithoutDeletedOnde);
   }
+
+  function handleNewCommentInvalid() {
+    event.target.setCustomValidity("Esse campo é obrigatório!");
+  }
+
   return (
     <article className={styles.post}>
       <header>
@@ -76,9 +81,16 @@ export function Post({ author, publishedAt, content }) {
           placeholder="Deixe um comentário"
           value={newCommentText}
           onChange={handleNewCommentChange}
+          onInvalid={handleNewCommentInvalid}
+          required
         />
         <footer >
-          <button type="submit">Publicar</button>
+          <button 
+            type="submit"
+            disabled={isNewCommentEmpty}
+          >
+            Publicar
+          </button>
         </footer>
       </form>
 
